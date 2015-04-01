@@ -8,7 +8,7 @@ class AnalyzerTest(unittest.TestCase):
         training_inputs = [[0,10,10],[10,10,10]]
         training_outputs = [0,1]
         model = LogisticRegression()
-        analyzer = analyze.ClassificationExplanation(training_inputs, training_outputs, feature_names, model)
+        analyzer = analyze.ClassificationExplanationModel(training_inputs, training_outputs, feature_names, model)
         for inp in training_inputs:
-            print(analyzer.explain_classification(inp, 0))
-            print(analyzer.explain_classification(inp, 0))
+            print(inp)
+            print(analyzer.explain_classification(inp))
