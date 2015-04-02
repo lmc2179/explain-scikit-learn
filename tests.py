@@ -1,5 +1,6 @@
 import unittest
 import analyze
+import pprint
 from sklearn.linear_model import LogisticRegression
 
 class AnalyzerTest(unittest.TestCase):
@@ -11,4 +12,5 @@ class AnalyzerTest(unittest.TestCase):
         analyzer = analyze.ExplainableClassifier(training_inputs, training_outputs, feature_names, model)
         for inp in training_inputs:
             print(inp)
-            print(analyzer.explain_classification(inp))
+            explanation = analyzer.explain_classification(inp, 10000)
+            pprint.pprint(explanation)

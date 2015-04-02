@@ -48,7 +48,9 @@ class ExplainableClassifier(object):
                 feature_contributions[feature] += (v1 - v2)
         # Normalize each contribution vector by number of samples
         for feature, contributions in feature_contributions.items():
-            feature_contributions[feature] = contributions * (1.0 / number_of_samples)
+            contribution_vector = contributions * (1.0 / number_of_samples)
+            feature_contributions[feature] = {cls:contribution for cls, contribution in zip(self.class_names,
+                                                                                            contribution_vector[0])}
         return feature_contributions
 
     def _sample_input_space(self):
@@ -56,3 +58,6 @@ class ExplainableClassifier(object):
 
     def _tau(self, x, y, substituted_features): #TODO: Rename: Name was chosen to match strumbelj et. al's notation in first version
         return [x[i] if feature in substituted_features else y[i] for i, feature in enumerate(self.feature_names)]
+
+class ExplanationVisualize(object):
+    pass
