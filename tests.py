@@ -10,7 +10,6 @@ class AnalyzerTest(unittest.TestCase):
         training_outputs = [0,1]
         model = LogisticRegression()
         analyzer = analyze.ExplainableClassifier(training_inputs, training_outputs, feature_names, model)
-        for inp in training_inputs:
-            print(inp)
-            explanation = analyzer.explain_classification(inp, 10000)
-            pprint.pprint(explanation)
+        explanations = [analyzer.explain_classification(inp, 1000) for inp in training_inputs]
+        pprint.pprint(list(zip(training_inputs,explanations)))
+        analyze.BarPlot(explanations[0])

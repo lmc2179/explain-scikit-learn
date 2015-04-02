@@ -1,6 +1,9 @@
 import numpy as np
 import copy
 import random
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set(style="white", context="talk")
 
 class ExplainableClassifier(object):
     def __init__(self, training_inputs, training_outputs, feature_names, model):
@@ -59,5 +62,20 @@ class ExplainableClassifier(object):
     def _tau(self, x, y, substituted_features): #TODO: Rename: Name was chosen to match strumbelj et. al's notation in first version
         return [x[i] if feature in substituted_features else y[i] for i, feature in enumerate(self.feature_names)]
 
-class ExplanationVisualize(object):
-    pass
+def BarPlot(explanation):
+    "Produce a number of barplots, one for each class."
+    #TODO: Hide all this unwrapping of arrays
+    #TODO: Cut this up into smaller functions, possibly embed in a class
+    #TODO: Why is the X-axis not rendering correctly?
+    #TODO: Determination of y-axis dynamically?
+    feature_names = np.array(list(explanation.keys()))
+    class_names = list(explanation[feature_names[0]].keys())
+    f, *ax = plt.subplots(len(class_names), 1, figsize=(8, 6), sharex=True)
+    for axis, cls in zip(ax[0], class_names):
+        contribution_vector = np.array([explanation[f][cls] for f in feature_names])
+        sns.barplot(feature_names, contribution_vector, ci=None, palette="coolwarm", hline=0, ax=axis)
+        axis.set_ylabel('Class {0}'.format(cls))
+    sns.despine(bottom=True)
+    plt.setp(f.axes, yticks=[-1.0, -0.5, 0.0, 0.5, 1.0])
+    plt.tight_layout(h_pad=3)
+    plt.show()
