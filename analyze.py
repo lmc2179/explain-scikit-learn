@@ -73,9 +73,9 @@ def BarPlot(explanation):
     f, *ax = plt.subplots(len(class_names), 1, figsize=(8, 6), sharex=True)
     for axis, cls in zip(ax[0], class_names):
         contribution_vector = np.array([explanation[f][cls] for f in feature_names])
-        sns.barplot(feature_names, contribution_vector, ci=None, palette="coolwarm", hline=0, ax=axis)
-        axis.set_ylabel('Class {0}'.format(cls))
+        sns.barplot(feature_names, contribution_vector, ci=None, hline=0, ax=axis)
+        axis.set_ylabel('{0}'.format(cls))
     sns.despine(bottom=True)
-    plt.setp(f.axes, yticks=[-1.0, -0.5, 0.0, 0.5, 1.0])
+    plt.setp(f.axes, yticks=[-0.5, 0.0, 0.5])
     plt.tight_layout(h_pad=3)
     plt.show()
