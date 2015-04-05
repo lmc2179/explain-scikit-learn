@@ -76,6 +76,6 @@ def BarPlot(explanation):
         sns.barplot(feature_names, contribution_vector, ci=None, hline=0, ax=axis)
         axis.set_ylabel('{0}'.format(cls))
     sns.despine(bottom=True)
-    plt.setp(f.axes, yticks=[-0.5, 0.0, 0.5])
+    plt.setp(f.axes, yticks=[-1.0, -0.75,-0.5, 0.0, 0.5, 0.75, 1.0])
     plt.tight_layout(h_pad=3)
     plt.show()
