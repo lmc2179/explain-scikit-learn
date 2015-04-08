@@ -54,7 +54,7 @@ class ExplainableClassifier(object):
             contribution_vector = contributions * (1.0 / number_of_samples)
             feature_contributions[feature] = {cls:contribution for cls, contribution in zip(self.class_names,
                                                                                             contribution_vector[0])}
-        return feature_contributions
+        return Explanation(feature_contributions)
 
     def _sample_input_space(self):
         return [random.uniform(a,b) for a,b in zip(self.training_min, self.training_max)]
@@ -62,17 +62,36 @@ class ExplainableClassifier(object):
     def _tau(self, x, y, substituted_features): #TODO: Rename: Name was chosen to match strumbelj et. al's notation in first version
         return [x[i] if feature in substituted_features else y[i] for i, feature in enumerate(self.feature_names)]
 
+class Explanation(object):
+    "A plain old data object containing the explanation results."
+    def __init__(self, feature_contributions):
+        self.feature_names = np.array(list(feature_contributions.keys()))
+        self.class_names = list(feature_contributions[self.feature_names[0]].keys())
+        self.feature_contributions = feature_contributions
+
+    def get_contribution(self, feature, cls):
+        return self.feature_contributions[feature][cls]
+
+    def get_feature_contribution_vector(self, feature):
+        """Returns vector where each row is a contribution of the feature toward a class. Classes are represented
+        in the same order as the class_names attribute."""
+        return np.array([self.feature_contributions[feature][cls] for cls in self.class_names])
+
+    def get_class_contribution_vector(self, cls):
+        """Returns vector where each row is a contribution of a feature toward the class. Features are represented in the
+        same order as the feature_names attribute.
+        """
+        return np.array([self.feature_contributions[f][cls] for f in self.feature_names])
+
 def BarPlot(explanation):
     "Produce a number of barplots, one for each class."
-    #TODO: Hide all this unwrapping of arrays
-    #TODO: Cut this up into smaller functions, possibly embed in a class
-    #TODO: Why is the X-axis not rendering correctly?
+    #TODO: Hide all this unwrapping of arrays for axes
     #TODO: Determination of y-axis dynamically?
-    feature_names = np.array(list(explanation.keys()))
-    class_names = list(explanation[feature_names[0]].keys())
+    feature_names = explanation.feature_names
+    class_names = explanation.class_names
     f, *ax = plt.subplots(len(class_names), 1, figsize=(8, 6), sharex=True)
     for axis, cls in zip(ax[0], class_names):
-        contribution_vector = np.array([explanation[f][cls] for f in feature_names])
+        contribution_vector = explanation.get_class_contribution_vector(cls)
         sns.barplot(feature_names, contribution_vector, ci=None, hline=0, ax=axis)
         axis.set_ylabel('{0}'.format(cls))
     sns.despine(bottom=True)
