@@ -18,6 +18,6 @@ explanation = analyzer.explain_classification(data.data[0])
 analyze.BarPlot(explanation)
 ```
 
-This is an implementation of the classification explanation method described by:
-  Erik Strumbelj and Igor Kononenko, "An Efficient Explanation of Individual Classifications using Game Theory", Journal of Machine Learning Research, 2010.
+The main algorithm used by this tool is an implementation of the classification explanation method described by:
+  [Erik Strumbelj and Igor Kononenko, "An Efficient Explanation of Individual Classifications using Game Theory", Journal of Machine Learning Research.](http://lkm.fri.uni-lj.si/xaigor/slo/pedagosko/dr-ui/jmlr-strumbelj-kononenko.pdf)
   
