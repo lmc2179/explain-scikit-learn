@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 sns.set(style="white", context="talk")
 
 class ExplainableClassifier(object):
-    def __init__(self, training_inputs, training_outputs, feature_names, model):
+    def __init__(self, feature_names, model):
         """
-        Train a model and store it so explanations can be produced later.
+        Produce a wrapper around the model which allows explanations of particular classifications.
 
         Model should define the following, similar to scikit-learn classes:
             1. fit(X,y) method
@@ -17,8 +17,14 @@ class ExplainableClassifier(object):
         """
         self.model = model
         self.feature_names = feature_names
-        self.model.fit(training_inputs, training_outputs)
-        self.training_min, self.training_max = self._get_vector_min_max(training_inputs)
+
+    def fit(self, X, y):
+        self.training_min, self.training_max = self._get_vector_min_max(X)
+        self.model.fit(X, y)
+
+    def partial_fit(self, X, y):
+        self.training_min, self.training_max = self._get_vector_min_max(np.concatenate([X,np.array([[self.training_min],[self.training_max]])]))
+        self.model.partial_fit(X, y)
 
     def _get_vector_min_max(self, vectors):
         min_vector = vectors[0]

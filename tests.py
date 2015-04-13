@@ -16,8 +16,9 @@ class AnalyzerTest(unittest.TestCase):
         training_inputs = [[0,10,10],[10,10,10]]
         training_outputs = [0,1]
         model = LogisticRegression()
-        analyzer = analyze.ExplainableClassifier(training_inputs, training_outputs, feature_names, model)
-        explanations = [analyzer.explain_classification(inp, 1000) for inp in training_inputs]
+        explainable_model = analyze.ExplainableClassifier(feature_names, model)
+        explainable_model.fit(training_inputs, training_outputs)
+        explanations = [explainable_model.explain_classification(inp, 1000) for inp in training_inputs]
         pprint.pprint(list(zip(training_inputs,explanations)))
         analyze.BarPlot(explanations[0])
 
@@ -25,6 +26,7 @@ class AnalyzerTest(unittest.TestCase):
         data = datasets.load_iris()
         model = LogisticRegression()
         target = [data.target_names[t] for t in data.target]
-        analyzer = analyze.ExplainableClassifier(data.data, target, data.feature_names, model)
-        explanation = analyzer.explain_classification(data.data[0])
+        explainable_model = analyze.ExplainableClassifier(data.feature_names, model)
+        explainable_model.fit(data.data, target)
+        explanation = explainable_model.explain_classification(data.data[0])
         analyze.BarPlot(explanation)
