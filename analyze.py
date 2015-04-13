@@ -28,13 +28,14 @@ class ExplainableClassifier(object):
             max_vector = [max(v1,v2) for v1, v2 in zip(v, max_vector)]
         return min_vector, max_vector
 
-
-    @property
-    def class_names(self):
-        return self.model.classes_
+    def __getattr__(self, item):
+        try:
+            return getattr(self.model, item)
+        except AttributeError:
+            raise AttributeError
 
     def explain_classification(self, x, number_of_samples=1000):
-        feature_contributions = {f:np.zeros((1,len(self.class_names))) for f in self.feature_names}
+        feature_contributions = {f:np.zeros((1,len(self.classes_))) for f in self.feature_names}
         feature_permutations = copy.deepcopy(self.feature_names)
         for i in range(number_of_samples):
             # Produce random elements (feature_permutations and input sample), calculate perturbed probability, adjust
@@ -52,7 +53,7 @@ class ExplainableClassifier(object):
         # Normalize each contribution vector by number of samples
         for feature, contributions in feature_contributions.items():
             contribution_vector = contributions * (1.0 / number_of_samples)
-            feature_contributions[feature] = {cls:contribution for cls, contribution in zip(self.class_names,
+            feature_contributions[feature] = {cls:contribution for cls, contribution in zip(self.classes_,
                                                                                             contribution_vector[0])}
         return Explanation(feature_contributions)
 
@@ -75,7 +76,7 @@ class Explanation(object):
     def get_feature_contribution_vector(self, feature):
         """Returns vector where each row is a contribution of the feature toward a class. Classes are represented
         in the same order as the class_names attribute."""
-        return np.array([self.feature_contributions[feature][cls] for cls in self.class_names])
+        return np.array([self.feature_contributions[feature][cls] for cls in self.classes_])
 
     def get_class_contribution_vector(self, cls):
         """Returns vector where each row is a contribution of a feature toward the class. Features are represented in the
