@@ -10,7 +10,6 @@ import pandas as pd
 #TODO: Add test for Titanic data set
 
 class AnalyzerTest(unittest.TestCase):
-    @unittest.skip('Temp')
     def test_approximate_contribution(self):
         feature_names = ['feature', 'useless_1', 'useless_2']
         training_inputs = [[0,10,10],[10,10,10]]
