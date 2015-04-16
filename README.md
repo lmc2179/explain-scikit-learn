@@ -1,14 +1,15 @@
 # explain-scikit-learn
-Create wrappers around scikit-learn classifiers which explain how they make their decisions. The wrapper will work for any classifier with a `predict_proba` method.
+Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper. The wrapper will work for any classifier with a `predict_proba` method.
 
 The tools helps you to answer the question: "How did the features present in this instance affect my classifier's choice?"
 
-For example, the following graph is the output on an instance from the Iris dataset, explaining how a logistic regression model viewed each feature's value as evidence for or against each class. The logistic regression model classifies this as "setosa".
+For example, the following graph is the output on an instance from the Iris dataset, explaining how a logistic regression model viewed each feature's value as evidence for or against each class. The logistic regression model correctly classifies this as "setosa".
 
 
 ![ScreenShot](iris_example.png)
 
-The example was implemented using the following code, which takes a scikit-learn model and input data to train it on, and produces a wrapped model which is trained and use for an explanation:
+The example can be reproduced with this code, which shows you how to use the wrapper - initialize your model and add it to the ExplainableClassifier class, then train it as you normally would. Once it's trained, you can use the `explain classification` method to get an explanation for any classificaiton of an input you specify.
+
 ```
 data = datasets.load_iris()
 model = LogisticRegression()
