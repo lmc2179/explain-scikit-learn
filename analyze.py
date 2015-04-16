@@ -40,6 +40,23 @@ class ExplainableClassifier(object):
         except AttributeError:
             raise AttributeError
 
+    def _sample_feature_contribution(self, feature, feature_permutations, input_sample, x):
+        substitute_features = feature_permutations[:feature_permutations.index(feature)]
+        perturbed_input_with_feature = self._substitute(x, input_sample, substitute_features + [feature])
+        perturbed_input_without_feature = self._substitute(x, input_sample, substitute_features)
+        predicted_probability_with_feature = self.model.predict_proba(perturbed_input_with_feature)
+        predicted_probability_without_feature = self.model.predict_proba(perturbed_input_without_feature)
+        feature_contribution_sample = predicted_probability_with_feature - predicted_probability_without_feature
+        return feature_contribution_sample
+
+    def _get_mean_of_samples(self, feature_contributions, number_of_samples):
+        normalized_feature_contributions = {}
+        for feature, contributions in feature_contributions.items():
+            contribution_vector = contributions * (1.0 / number_of_samples)
+            normalized_feature_contributions[feature] = {cls: contribution for cls, contribution in zip(self.classes_,
+                                                                                             contribution_vector[0])}
+        return normalized_feature_contributions
+
     def explain_classification(self, x, number_of_samples=1000):
         feature_contributions = {f:np.zeros((1,len(self.classes_))) for f in self.feature_names}
         feature_permutations = copy.deepcopy(self.feature_names)
@@ -49,24 +66,17 @@ class ExplainableClassifier(object):
             input_sample = self._sample_input_space()
             for feature in self.feature_names:
                 # Get next iteration of feature contribution vector
-                substitute_features = feature_permutations[:feature_permutations.index(feature)]
-                #TODO: Input vectors need better names
-                perturbed_input_with_feature = self._tau(x, input_sample, substitute_features+[feature])
-                perturbed_input_without_feature = self._tau(x, input_sample, substitute_features)
-                v1 = self.model.predict_proba(perturbed_input_with_feature)
-                v2 = self.model.predict_proba(perturbed_input_without_feature)
-                feature_contributions[feature] += (v1 - v2)
+                feature_contribution_sample = self._sample_feature_contribution(feature, feature_permutations,
+                                                                                input_sample, x)
+                feature_contributions[feature] += feature_contribution_sample
         # Normalize each contribution vector by number of samples
-        for feature, contributions in feature_contributions.items():
-            contribution_vector = contributions * (1.0 / number_of_samples)
-            feature_contributions[feature] = {cls:contribution for cls, contribution in zip(self.classes_,
-                                                                                            contribution_vector[0])}
-        return Explanation(feature_contributions)
+        normalized_feature_contributions = self._get_mean_of_samples(feature_contributions, number_of_samples)
+        return Explanation(normalized_feature_contributions)
 
     def _sample_input_space(self):
         return [random.uniform(a,b) for a,b in zip(self.training_min, self.training_max)]
 
-    def _tau(self, x, y, substituted_features): #TODO: Rename: Name was chosen to match strumbelj et. al's notation in first version
+    def _substitute(self, x, y, substituted_features):
         return [x[i] if feature in substituted_features else y[i] for i, feature in enumerate(self.feature_names)]
 
 class Explanation(object):
