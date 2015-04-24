@@ -69,7 +69,7 @@ class ExplainableClassifier(object):
         which will indicate the importance of each feature for each possible class in the model's decision."""
         feature_contributions = self._get_sum_of_sample_contributions(number_of_samples, x)
         normalized_feature_contributions = self._get_mean_of_samples(feature_contributions, number_of_samples)
-        return Explanation(normalized_feature_contributions)
+        return Explanation(normalized_feature_contributions, x, self.model.predict_proba(x))
 
     def _get_sum_of_sample_contributions(self, number_of_samples, x):
         feature_contributions = {f: np.zeros((1, len(self.classes_))) for f in self.feature_names}
@@ -117,10 +117,12 @@ class _UniformRealSampler(object):
 
 class Explanation(object):
     "A plain old data object containing the explanation results."
-    def __init__(self, feature_contributions):
+    def __init__(self, feature_contributions, inputs, probabilistic_prediction):
         self.feature_names = np.array(list(feature_contributions.keys()))
         self.class_names = list(feature_contributions[self.feature_names[0]].keys())
         self.feature_contributions = feature_contributions
+        self.inputs = inputs
+        self.probabilistic_prediction = probabilistic_prediction
 
     def get_contribution(self, feature, cls):
         return self.feature_contributions[feature][cls]
@@ -141,11 +143,12 @@ def BarPlot(explanation):
     #TODO: Hide all this unwrapping of arrays for axes
     #TODO: Determination of y-axis dynamically?
     feature_names = explanation.feature_names
+    x_axis = np.array(['{0}={1}'.format(f, str(explanation.inputs[i])) for i, f in enumerate(feature_names)])
     class_names = explanation.class_names
     f, *ax = plt.subplots(len(class_names), 1, figsize=(8, 6), sharex=True)
     for axis, cls in zip(ax[0], class_names):
         contribution_vector = explanation.get_class_contribution_vector(cls)
-        sns.barplot(feature_names, contribution_vector, ci=None, hline=0, ax=axis)
+        sns.barplot(x_axis, contribution_vector, ci=None, hline=0, ax=axis)
         axis.set_ylabel('{0}'.format(cls))
     sns.despine(bottom=True)
     plt.setp(f.axes, yticks=[-1.0, -0.75,-0.5, 0.0, 0.5, 0.75, 1.0])

@@ -34,7 +34,7 @@ class AnalyzerTest(unittest.TestCase):
         explanation = explainable_model.explain_classification(data.data[0])
         analyze.BarPlot(explanation)
 
-    # @unittest.skip('')
+    @unittest.skip('')
     def test_categorical(self): #To become Titanic test; needs categorical data model
         model = CategoricalNaiveBayes()
         explainable_model = analyze.ExplainableClassifier(['useful', 'useless'], model)
