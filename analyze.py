@@ -17,7 +17,7 @@ class ExplainableClassifier(object):
         """
         self.model = model
         self.feature_names = feature_names
-        self.samplers = [_UniformRealSampler() for i, _ in enumerate(feature_names)]
+        self.samplers = None
 
     def fit(self, X, y):
         [self._add_observations_to_sample(x) for x in X]
@@ -28,7 +28,18 @@ class ExplainableClassifier(object):
         self.model.partial_fit(X, y)
 
     def _add_observations_to_sample(self, x):
-        [sampler.observe(x_i) for sampler, x_i in zip(self.samplers, x)]
+        if self.samplers:
+            [sampler.observe(x_i) for sampler, x_i in zip(self.samplers, x)]
+        else: # Perform initial construction of samplers by attempting type inference
+            samplers = []
+            for x_i in x:
+                if isinstance(x_i, (int, float)):
+                    sampler = _UniformRealSampler()
+                else:
+                    sampler = _UniformCategoricalSampler()
+                sampler.observe(x_i)
+                samplers.append(sampler)
+            self.samplers = samplers
 
     def __getattr__(self, item):
         try:
@@ -77,6 +88,16 @@ class ExplainableClassifier(object):
 
     def _substitute(self, x, y, substituted_features):
         return [x[i] if feature in substituted_features else y[i] for i, feature in enumerate(self.feature_names)]
+
+class _UniformCategoricalSampler(object):
+    def __init__(self):
+        self.observed = set()
+
+    def observe(self, inp):
+        self.observed.add(inp)
+
+    def sample(self):
+        return random.choice(list(self.observed))
 
 class _UniformRealSampler(object):
     def __init__(self):

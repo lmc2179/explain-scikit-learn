@@ -5,12 +5,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import datasets
 from collections import defaultdict
 from functools import reduce
+import numpy as np
 
 #TODO: Separate explanation mechanism tests from visualization tests
 #TODO: Add assertions to explanation mechanism tests
 #TODO: Add test for Titanic data set
 
 class AnalyzerTest(unittest.TestCase):
+    @unittest.skip('')
     def test_approximate_contribution(self):
         feature_names = ['feature', 'useless_1', 'useless_2']
         training_inputs = [[0,10,10],[10,10,10]]
@@ -22,6 +24,7 @@ class AnalyzerTest(unittest.TestCase):
         pprint.pprint(list(zip(training_inputs,explanations)))
         analyze.BarPlot(explanations[0])
 
+    @unittest.skip('')
     def test_iris(self):
         data = datasets.load_iris()
         model = LogisticRegression()
@@ -31,7 +34,7 @@ class AnalyzerTest(unittest.TestCase):
         explanation = explainable_model.explain_classification(data.data[0])
         analyze.BarPlot(explanation)
 
-    @unittest.skip('Not ready yet')
+    # @unittest.skip('')
     def test_categorical(self): #To become Titanic test; needs categorical data model
         model = CategoricalNaiveBayes()
         explainable_model = analyze.ExplainableClassifier(['useful', 'useless'], model)
@@ -57,7 +60,8 @@ class CategoricalNaiveBayes(object):
                 self.counts[(i,x_i, output_class)] += 1
 
     def predict_proba(self, X):
-        return [[self.predict_proba_for_class(x, cls) for cls in self.classes_] for x in X]
+        X = np.atleast_2d(X)
+        return np.array([[self.predict_proba_for_class(x, cls) for cls in self.classes_] for x in X])
 
     def predict_proba_for_class(self, x, cls):
         independent_probabilities = []
