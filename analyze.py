@@ -58,20 +58,23 @@ class ExplainableClassifier(object):
         return normalized_feature_contributions
 
     def explain_classification(self, x, number_of_samples=1000):
-        feature_contributions = {f:np.zeros((1,len(self.classes_))) for f in self.feature_names}
+        """Produce an explanation for the model's decision about the data point x. Returns an Explanation object,
+        which will indicate the importance of each feature for each possible class in the model's decision."""
+        feature_contributions = self._get_sum_of_sample_contributions(number_of_samples, x)
+        normalized_feature_contributions = self._get_mean_of_samples(feature_contributions, number_of_samples)
+        return Explanation(normalized_feature_contributions)
+
+    def _get_sum_of_sample_contributions(self, number_of_samples, x):
+        feature_contributions = {f: np.zeros((1, len(self.classes_))) for f in self.feature_names}
         feature_permutations = copy.deepcopy(self.feature_names)
         for i in range(number_of_samples):
-            # Produce random elements (feature_permutations and input sample), calculate perturbed probability, adjust
             random.shuffle(feature_permutations)
             input_sample = self._sample_input_space()
             for feature in self.feature_names:
-                # Get next iteration of feature contribution vector
                 feature_contribution_sample = self._sample_feature_contribution(feature, feature_permutations,
                                                                                 input_sample, x)
                 feature_contributions[feature] += feature_contribution_sample
-        # Normalize each contribution vector by number of samples
-        normalized_feature_contributions = self._get_mean_of_samples(feature_contributions, number_of_samples)
-        return Explanation(normalized_feature_contributions)
+        return feature_contributions
 
     def _sample_input_space(self):
         return [random.uniform(a,b) for a,b in zip(self.training_min, self.training_max)]
