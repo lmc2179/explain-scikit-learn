@@ -24,7 +24,7 @@ class AnalyzerTest(unittest.TestCase):
         pprint.pprint(list(zip(training_inputs,explanations)))
         analyze.BarPlot(explanations[0])
 
-    @unittest.skip('')
+    # @unittest.skip('')
     def test_iris(self):
         data = datasets.load_iris()
         model = LogisticRegression()
