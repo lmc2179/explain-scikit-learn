@@ -33,7 +33,7 @@ class ExplainableClassifier(object):
         else: # Perform initial construction of samplers by attempting type inference
             samplers = []
             for x_i in x:
-                if isinstance(x_i, (int, float)):
+                if isinstance(x_i, (int, float)) and not isinstance(x_i, bool):
                     sampler = _UniformRealSampler()
                 else:
                     sampler = _UniformCategoricalSampler()

@@ -24,7 +24,7 @@ class AnalyzerTest(unittest.TestCase):
         pprint.pprint(list(zip(training_inputs,explanations)))
         analyze.BarPlot(explanations[0])
 
-    # @unittest.skip('')
+    @unittest.skip('')
     def test_iris(self):
         data = datasets.load_iris()
         model = LogisticRegression()
@@ -43,6 +43,36 @@ class AnalyzerTest(unittest.TestCase):
         explainable_model.fit(data, target)
         explanation = explainable_model.explain_classification(data[0])
         analyze.BarPlot(explanation)
+
+    def test_boolean_or(self):
+        model = BooleanOrTestModel()
+        explainable_model = analyze.ExplainableClassifier(['1','2'], model)
+        data = [[True, True],[True, False],[False, True],[False, False]]
+        target = [True, True, True, False]
+        explainable_model.fit(data, target)
+        explanation = explainable_model.explain_classification(data[0], number_of_samples=10000)
+        tolerance = 0.05
+        actual_contribution = 1/8.0
+        lower_bound = actual_contribution - tolerance
+        upper_bound = actual_contribution + tolerance
+        true_contributions = explanation.get_class_contribution_vector(True)
+        print(true_contributions)
+        assert all([lower_bound < v_i< upper_bound for v_i in true_contributions])
+
+class BooleanOrTestModel(object):
+    def fit(self, X,y):
+        pass
+
+    @property
+    def classes_(self):
+        return [True, False]
+
+    def predict_proba(self, X):
+        X = np.atleast_2d(X)
+        return np.array([[self.predict_proba_for_class(x, cls) for cls in self.classes_] for x in X])
+
+    def predict_proba_for_class(self, x, cls):
+        return 1.0 if any(x)==cls else 0.0
 
 class CategoricalNaiveBayes(object):
     def __init__(self):
