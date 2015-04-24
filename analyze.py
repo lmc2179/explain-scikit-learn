@@ -17,22 +17,18 @@ class ExplainableClassifier(object):
         """
         self.model = model
         self.feature_names = feature_names
+        self.samplers = [_UniformRealSampler() for i, _ in enumerate(feature_names)]
 
     def fit(self, X, y):
-        self.training_min, self.training_max = self._get_vector_min_max(X)
+        [self._add_observations_to_sample(x) for x in X]
         self.model.fit(X, y)
 
     def partial_fit(self, X, y):
-        self.training_min, self.training_max = self._get_vector_min_max(np.concatenate([X,np.array([[self.training_min],[self.training_max]])]))
+        [self._add_observations_to_sample(x) for x in X]
         self.model.partial_fit(X, y)
 
-    def _get_vector_min_max(self, vectors):
-        min_vector = vectors[0]
-        max_vector = vectors[0]
-        for v in vectors[0:]:
-            min_vector = [min(v1,v2) for v1, v2 in zip(v, min_vector)]
-            max_vector = [max(v1,v2) for v1, v2 in zip(v, max_vector)]
-        return min_vector, max_vector
+    def _add_observations_to_sample(self, x):
+        [sampler.observe(x_i) for sampler, x_i in zip(self.samplers, x)]
 
     def __getattr__(self, item):
         try:
@@ -77,10 +73,26 @@ class ExplainableClassifier(object):
         return feature_contributions
 
     def _sample_input_space(self):
-        return [random.uniform(a,b) for a,b in zip(self.training_min, self.training_max)]
+        return [sampler.sample() for sampler in self.samplers]
 
     def _substitute(self, x, y, substituted_features):
         return [x[i] if feature in substituted_features else y[i] for i, feature in enumerate(self.feature_names)]
+
+class _UniformRealSampler(object):
+    def __init__(self):
+        self.min = None
+        self.max = None
+
+    def observe(self, inp):
+        if self.min is None:
+            self.min = inp
+            self.max = inp
+        else:
+            self.min = min(self.min, inp)
+            self.max = max(self.max, inp)
+
+    def sample(self):
+        return random.uniform(self.min, self.max)
 
 class Explanation(object):
     "A plain old data object containing the explanation results."
