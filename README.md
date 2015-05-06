@@ -6,11 +6,14 @@ The tools helps you to answer the question: "How did the features present in thi
 For example, the following graph is the output on an instance from the Iris dataset, explaining how a logistic regression model viewed each feature's value as evidence for or against each class. The logistic regression model correctly classifies this as "setosa".
 
 
-![ScreenShot](iris_example.png)
+![ScreenShot](explain_sklearn/iris_example.png)
 
 The example can be reproduced with this code, which shows you how to use the wrapper - initialize your model and add it to the ExplainableClassifier class, then train it as you normally would. Once it's trained, you can use the `explain classification` method to get an explanation for any classificaiton of an input you specify.
 
 ```
+from sklearn.linear_model import LogisticRegression
+from sklearn import datasets
+
 data = datasets.load_iris()
 model = LogisticRegression()
 target = [data.target_names[t] for t in data.target]
