@@ -1,11 +1,14 @@
 import unittest
-import analyze
 import pprint
-from sklearn.linear_model import LogisticRegression
-from sklearn import datasets
 from collections import defaultdict
 from functools import reduce
+
+from sklearn.linear_model import LogisticRegression
+from sklearn import datasets
 import numpy as np
+
+from explain_sklearn import analyze
+
 
 #TODO: Separate explanation mechanism tests from visualization tests
 #TODO: Add assertions to explanation mechanism tests
