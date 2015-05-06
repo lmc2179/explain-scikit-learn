@@ -11,6 +11,7 @@ For example, the following graph is the output on an instance from the Iris data
 The example can be reproduced with this code, which shows you how to use the wrapper - initialize your model and add it to the ExplainableClassifier class, then train it as you normally would. Once it's trained, you can use the `explain classification` method to get an explanation for any classificaiton of an input you specify.
 
 ```
+from explain_sklearn import analyze
 from sklearn.linear_model import LogisticRegression
 from sklearn import datasets
 
