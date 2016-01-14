@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import datasets
 import numpy as np
 
-from explain_sklearn import analyze
+from explain_sklearn import explainable_classifier
 
 
 #TODO: Separate explanation mechanism tests from visualization tests
@@ -21,35 +21,35 @@ class AnalyzerTest(unittest.TestCase):
         training_inputs = [[0,10,10],[10,10,10]]
         training_outputs = [0,1]
         model = LogisticRegression()
-        explainable_model = analyze.ExplainableClassifier(feature_names, model)
+        explainable_model = explainable_classifier.ExplainableClassifier(feature_names, model)
         explainable_model.fit(training_inputs, training_outputs)
         explanations = [explainable_model.explain_classification(inp, 1000) for inp in training_inputs]
         pprint.pprint(list(zip(training_inputs,explanations)))
-        analyze.BarPlot(explanations[0])
+        explainable_classifier.BarPlot(explanations[0])
 
     @unittest.skip('')
     def test_iris(self):
         data = datasets.load_iris()
         model = LogisticRegression()
         target = [data.target_names[t] for t in data.target]
-        explainable_model = analyze.ExplainableClassifier(data.feature_names, model)
+        explainable_model = explainable_classifier.ExplainableClassifier(data.feature_names, model)
         explainable_model.fit(data.data, target)
         explanation = explainable_model.explain_classification(data.data[0])
-        analyze.BarPlot(explanation)
+        explainable_classifier.BarPlot(explanation)
 
     @unittest.skip('')
     def test_categorical(self): #To become Titanic test; needs categorical data model
         model = CategoricalNaiveBayes()
-        explainable_model = analyze.ExplainableClassifier(['useful', 'useless'], model)
+        explainable_model = explainable_classifier.ExplainableClassifier(['useful', 'useless'], model)
         data = [['A','C'],['B', 'C']]
         target = ['A', 'B']
         explainable_model.fit(data, target)
         explanation = explainable_model.explain_classification(data[0])
-        analyze.BarPlot(explanation)
+        explainable_classifier.BarPlot(explanation)
 
     def test_boolean_or(self):
         model = BooleanOrTestModel()
-        explainable_model = analyze.ExplainableClassifier(['1','2'], model)
+        explainable_model = explainable_classifier.ExplainableClassifier(['1', '2'], model)
         data = [[True, True],[True, False],[False, True],[False, False]]
         target = [True, True, True, False]
         explainable_model.fit(data, target)

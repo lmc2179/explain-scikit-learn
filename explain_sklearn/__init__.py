@@ -1,1 +1,1 @@
-import explain_sklearn.analyze
+import explain_sklearn.explainable_classifier
