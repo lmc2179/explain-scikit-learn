@@ -15,8 +15,7 @@ class RegressionDiagnostic(object):
 
     def get_residual_histogram(self):
         r = self.get_residuals()
-        mu = np.mean(r)
-        variance = (1.0 / (self.n-1)) * np.sum((self.X.reshape(self.n) - mu)**2)
+        mu, variance = norm.fit(r)
         bin_count = 20
         plt.hist(r, bins=bin_count, normed=True)
         curve_x = np.arange(min(r), max(r), 0.1)
