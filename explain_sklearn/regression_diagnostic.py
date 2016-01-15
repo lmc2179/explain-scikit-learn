@@ -36,3 +36,14 @@ class RegressionDiagnostic(object):
         for i, component in enumerate(X_components):
             plt.subplot(plot_base + i)
             plt.plot(component, r, linewidth=0.0, marker='.')
+
+    def get_predictor_vs_squared_residual_plot(self):
+        r = self.get_residuals()
+        r_squared = r**2
+        num_input_columns = len(self.X[0])
+        X_components = (self.X[:,i] for i in range(num_input_columns))
+        plt.figure(1)
+        plot_base = 210
+        for i, component in enumerate(X_components):
+            plt.subplot(plot_base + i)
+            plt.plot(component, r_squared, linewidth=0.0, marker='.')

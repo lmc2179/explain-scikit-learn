@@ -16,6 +16,7 @@ lr.fit(X, y)
 print(lr.coef_)
 
 diag = regression_diagnostic.RegressionDiagnostic(lr, X, y)
-diag.get_residual_histogram()
+# diag.get_residual_histogram()
 # diag.get_predictor_vs_residual_plot()
+diag.get_predictor_vs_squared_residual_plot()
 plt.show()
