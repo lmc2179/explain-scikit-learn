@@ -1,14 +1,15 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from scipy.stats import norm
-import math
+from scipy.stats import chi2, norm
+from scipy.integrate import quad
+from sklearn import linear_model, metrics
 
 class RegressionDiagnostic(object):
     def __init__(self, model, X, y):
         self.model = model
         self.X = X
         self.y = y
-        self.n = len(X)
+        self.sample_size = len(X)
         self.residuals = self.model.predict(self.X) - self.y
 
     def get_residuals(self):
@@ -47,3 +48,29 @@ class RegressionDiagnostic(object):
         for i, component in enumerate(X_components):
             plt.subplot(plot_base + i)
             plt.plot(component, r_squared, linewidth=0.0, marker='.')
+
+    def get_r_squared(self):
+        return self._calculate_r_squared(self.model, self.X, self.y)
+
+    def _calculate_r_squared(self, model, X, y):
+        # This is a pure function, unlike get_r_squared, which is a getter
+        residuals = model.predict(X) - y
+        mean_y = np.mean(y)
+        total_sum_of_squares = sum([(y_i - mean_y)**2 for y_i in y])
+        squared_residuals = residuals**2
+        residual_sum_of_squares = sum(squared_residuals)
+        return 1.0 - (residual_sum_of_squares / total_sum_of_squares)
+
+
+    def _get_chi_squared_p_value(self, test_statistic, degrees_of_freedom):
+        p_comp, abserr = quad(chi2.pdf, 0, test_statistic, args=(degrees_of_freedom))
+        return 1.0 - p_comp
+
+    def breusch_pagan(self):
+        residual_model = linear_model.LinearRegression()
+        residual_model.fit(self.X, self.residuals**2)
+        residual_model_r_squared = self._calculate_r_squared(residual_model, self.X, self.residuals**2)
+        lm_statistic = self.sample_size * residual_model_r_squared
+        degrees_of_freedom = len(self.model.coef_)
+        p = self._get_chi_squared_p_value(lm_statistic, degrees_of_freedom)
+        return p, lm_statistic
