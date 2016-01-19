@@ -74,6 +74,34 @@ class RegressionDiagnosticTest(unittest.TestCase):
         diag = regression_diagnostic.RegressionDiagnostic(lr, X, y)
         return diag
 
+    def test_VIF_no_correlation(self):
+        SAMPLE_SIZE = 100
+        X = np.random.uniform(0, 1.0, (SAMPLE_SIZE, 2))
+        y = np.zeros(SAMPLE_SIZE) # The model is irrelevant in this test
+        lr = linear_model.LinearRegression()
+        lr.fit(X, y)
+        diag = regression_diagnostic.RegressionDiagnostic(lr, X, y)
+        vifs = diag.get_variance_inflation_factors()
+        print('VIFs for uncorrelated case:', vifs)
+        x1_vif, x2_vif = vifs
+        self.assertLess(x1_vif, 1.5)
+        self.assertLess(x2_vif, 1.5)
+
+    def test_VIF_with_correlation(self):
+        SAMPLE_SIZE = 100
+        X_mu = np.array([0, 0])
+        X_covariance = np.array([[30, 20], [20, 15]])
+        X = np.random.multivariate_normal(X_mu, X_covariance, SAMPLE_SIZE)
+        y = np.zeros(SAMPLE_SIZE) # The model is irrelevant in this test
+        lr = linear_model.LinearRegression()
+        lr.fit(X, y)
+        diag = regression_diagnostic.RegressionDiagnostic(lr, X, y)
+        vifs = diag.get_variance_inflation_factors()
+        x1_vif, x2_vif = vifs
+        self.assertGreater(x1_vif, 5.0)
+        self.assertGreater(x2_vif, 5.0)
+        print('VIFs for correlated case:', vifs)
+
 # TODO: Additional tests
 # 3) VIF calculation
 

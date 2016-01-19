@@ -84,3 +84,14 @@ class RegressionDiagnostic(object):
 
     def test_residual_normality_shapiro_wilks(self):
         return self._test_residual_normality(shapiro)
+
+    def get_variance_inflation_factors(self):
+        VIFs = []
+        for i in range(len(self.X[0])):
+            X = np.concatenate((self.X[0:,:i], self.X[0:,i+1:]), axis=1)
+            y = self.X[:, i]
+            model = linear_model.LinearRegression()
+            model.fit(X, y)
+            r_squared = self._calculate_r_squared(model, X, y)
+            VIFs.append(1.0 / (1.0 - r_squared))
+        return VIFs
