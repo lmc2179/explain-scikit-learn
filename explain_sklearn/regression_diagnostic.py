@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from scipy.stats import chi2, norm
+from scipy.stats import chi2, norm, normaltest, shapiro
 from scipy.integrate import quad
 from sklearn import linear_model, metrics
 
@@ -63,14 +63,24 @@ class RegressionDiagnostic(object):
 
 
     def _get_chi_squared_p_value(self, test_statistic, degrees_of_freedom):
-        p_comp, abserr = quad(chi2.pdf, 0, test_statistic, args=(degrees_of_freedom))
-        return 1.0 - p_comp
+        p_complement, abserr = quad(chi2.pdf, 0, test_statistic, args=(degrees_of_freedom))
+        return 1.0 - p_complement
 
-    def breusch_pagan(self):
+    def test_noise_breusch_pagan(self):
         residual_model = linear_model.LinearRegression()
         residual_model.fit(self.X, self.residuals**2)
         residual_model_r_squared = self._calculate_r_squared(residual_model, self.X, self.residuals**2)
         lm_statistic = self.sample_size * residual_model_r_squared
         degrees_of_freedom = len(self.model.coef_)
         p = self._get_chi_squared_p_value(lm_statistic, degrees_of_freedom)
-        return p, lm_statistic
+        return lm_statistic, p
+
+    def _test_residual_normality(self, test_fxn):
+        r = self.get_residuals()
+        return test_fxn(r)
+
+    def test_residual_normality_dagostino_pearson(self):
+        return self._test_residual_normality(normaltest)
+
+    def test_residual_normality_shapiro_wilks(self):
+        return self._test_residual_normality(shapiro)
