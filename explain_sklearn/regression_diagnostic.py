@@ -3,6 +3,8 @@ import numpy as np
 from scipy.stats import chi2, norm, normaltest, shapiro
 from scipy.integrate import quad
 from sklearn import linear_model, metrics
+from copy import deepcopy
+import random
 
 class RegressionDiagnostic(object):
     def __init__(self, model, X, y):
@@ -15,7 +17,7 @@ class RegressionDiagnostic(object):
     def get_residuals(self):
         return self.residuals
 
-    def get_residual_histogram(self):
+    def plot_residual_histogram(self):
         r = self.get_residuals()
         mu, variance = norm.fit(r)
         bin_count = 20
@@ -28,7 +30,7 @@ class RegressionDiagnostic(object):
     def show(self):
         plt.show()
 
-    def get_predictor_vs_residual_plot(self):
+    def plot_get_predictor_vs_residual(self):
         r = self.get_residuals()
         num_input_columns = len(self.X[0])
         X_components = (self.X[:,i] for i in range(num_input_columns))
@@ -38,7 +40,7 @@ class RegressionDiagnostic(object):
             plt.subplot(plot_base + i)
             plt.plot(component, r, linewidth=0.0, marker='.')
 
-    def get_predictor_vs_squared_residual_plot(self):
+    def plot_predictor_vs_squared_residual(self):
         r = self.get_residuals()
         r_squared = r**2
         num_input_columns = len(self.X[0])
@@ -48,6 +50,16 @@ class RegressionDiagnostic(object):
         for i, component in enumerate(X_components):
             plt.subplot(plot_base + i)
             plt.plot(component, r_squared, linewidth=0.0, marker='.')
+
+    def plot_residual_vs_residual(self):
+        r = self.get_residuals()
+        r2 = deepcopy(r)
+        random.shuffle(r2)
+        plt.plot(r2, r, linewidth=0.0, marker='.')
+
+    def plot_coordinates_vs_residual(self):
+        r = self.get_residuals()
+        plt.plot(r, linewidth=0.0, marker='.')
 
     def get_r_squared(self):
         return self._calculate_r_squared(self.model, self.X, self.y)
