@@ -4,6 +4,7 @@
 
 ### Modules currently available:
 1) The `explainable_classifier` module: Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper
+
 2) The `regression_diagnostic` module: check the assumptions of linear regression for your dataset
 
 Detailed descriptions:
