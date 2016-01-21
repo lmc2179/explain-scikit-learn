@@ -1,4 +1,7 @@
 # explain-scikit-learn
+
+## The `explainable_classifier` module: Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper
+
 Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper. The wrapper will work for any classifier with a `predict_proba` method.
 
 The tools helps you to answer the question: "How did the features present in this instance affect my classifier's choice?"
@@ -27,3 +30,4 @@ analyze.BarPlot(explanation)
 The main algorithm used by this tool is an implementation of the classification explanation method described by:
   [Erik Strumbelj and Igor Kononenko, "An Efficient Explanation of Individual Classifications using Game Theory", Journal of Machine Learning Research.](http://lkm.fri.uni-lj.si/xaigor/slo/pedagosko/dr-ui/jmlr-strumbelj-kononenko.pdf)
   
+## The `regression_diagnostic` module: check regression algorithm assumptions on your data
