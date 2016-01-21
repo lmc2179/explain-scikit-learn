@@ -1,6 +1,14 @@
-# explain-scikit-learn
+# savvy
 
-## The `explainable_classifier` module: Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper
+`savvy` (formerly explain-sklearn) is a collection of tools for analyzing machine learning models in python. The tools provided will help users understand how their models make decisions, and see whether or not the assumptions of their algorithms are satisfied. They're designed to work with scikit-learn models, but will usually work with any class that implements the scikit-learn API.
+
+### Modules currently available:
+1) The `explainable_classifier` module: Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper
+2) The `regression_diagnostic` module: check the assumptions of linear regression for your dataset
+
+Detailed descriptions:
+
+## 1) The `explainable_classifier` module: Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper
 
 Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper. The wrapper will work for any classifier with a `predict_proba` method.
 
@@ -30,6 +38,6 @@ analyze.BarPlot(explanation)
 The main algorithm used by this tool is an implementation of the classification explanation method described by:
   [Erik Strumbelj and Igor Kononenko, "An Efficient Explanation of Individual Classifications using Game Theory", Journal of Machine Learning Research.](http://lkm.fri.uni-lj.si/xaigor/slo/pedagosko/dr-ui/jmlr-strumbelj-kononenko.pdf)
   
-## The `regression_diagnostic` module: check regression algorithm assumptions on your data
+## 2) The `regression_diagnostic` module: check the assumptions of linear regression for your dataset
 
 The `regression_diagnostic` module
