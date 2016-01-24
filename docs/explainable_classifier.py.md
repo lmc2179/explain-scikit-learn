@@ -1,6 +1,8 @@
 # explainable_classifier.py
 
-No docstring provided.
+
+
+
 
 &nbsp;&nbsp;&nbsp;&nbsp;**BarPlot**(explanation):
 
@@ -17,11 +19,13 @@ No docstring provided.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ExplainableClassifier.**fit**(self, X, y):
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No docstring provided.
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ExplainableClassifier.**partial_fit**(self, X, y):
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No docstring provided.
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
 
 &nbsp;&nbsp;&nbsp;&nbsp;**Explanation**(Explanation):
 

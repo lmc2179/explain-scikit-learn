@@ -1,3 +1,7 @@
+"""
+
+"""
+
 import numpy as np
 import copy
 import random
@@ -20,10 +24,14 @@ class ExplainableClassifier(object):
         self.samplers = None
 
     def fit(self, X, y):
+        """
+        """
         [self._add_observations_to_sample(x) for x in X]
         self.model.fit(X, y)
 
     def partial_fit(self, X, y):
+        """
+        """
         [self._add_observations_to_sample(x) for x in X]
         self.model.partial_fit(X, y)
 
