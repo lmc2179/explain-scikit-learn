@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 from sklearn import linear_model
-from explain_sklearn import regression_diagnostic
+from savvy import regression_diagnostic
 import random
 from matplotlib import pyplot as plt
 

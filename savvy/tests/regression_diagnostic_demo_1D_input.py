@@ -1,5 +1,5 @@
 import numpy as np
-from explain_sklearn import regression_diagnostic
+from savvy import regression_diagnostic
 from matplotlib import pyplot as plt
 from sklearn import linear_model
 # This is a demo of the diagnostic tool being used where the assumptions of the linear regression model are met.

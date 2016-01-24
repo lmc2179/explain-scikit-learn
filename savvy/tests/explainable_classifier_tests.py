@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import datasets
 import numpy as np
 
-from explain_sklearn import explainable_classifier
+from savvy import explainable_classifier
 
 
 #TODO: Separate explanation mechanism tests from visualization tests

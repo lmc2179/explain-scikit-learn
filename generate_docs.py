@@ -1,5 +1,5 @@
 from mimeograph import Generator
-from explain_sklearn import explainable_classifier, regression_diagnostic
+from savvy import explainable_classifier, regression_diagnostic
 
 g = Generator()
 g.generate_docs(project_name='savvy',
