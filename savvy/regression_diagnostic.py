@@ -139,3 +139,8 @@ class RegressionDiagnostic(object):
             r_squared = self._calculate_r_squared(model, X, y)
             VIFs.append(1.0 / (1.0 - r_squared))
         return VIFs
+
+del normaltest
+del deepcopy
+del quad
+del shapiro
