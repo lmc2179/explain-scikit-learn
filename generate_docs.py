@@ -1,9 +1,17 @@
-from mimeograph import Generator
-from savvy import explainable_classifier, regression_diagnostic
+import pdoc
+import os
 
-g = Generator()
-g.generate_docs(project_name='savvy',
-                summary="A collection of tools for interpreting and validating machine learning models.",
-                modules=[explainable_classifier, regression_diagnostic],
-                module_messages=['Turn any scikit-learn classifier into an interpretable model by adding a lightweight wrapper.',
-                                 'Check the validity of your regression model.'])
+DOCS_ROOT = 'docs'
+
+TARGET_MODULES = ['regression_diagnostic', 'explainable_classifier']
+
+def generate_doc(module_name):
+    rd_doc = pdoc.html('savvy.{0}'.format(module_name))
+    rd_doc_filename = os.path.join(DOCS_ROOT, module_name) + '.html'
+    f = open(rd_doc_filename, 'w')
+    f.write(rd_doc)
+    f.close()
+
+if __name__ == '__main__':
+    for m in TARGET_MODULES:
+        generate_doc(m)
